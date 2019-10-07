@@ -40,9 +40,11 @@ subtract(X,0,X).
 subtract(X,-Y,Z)         :- minus(Y,O), subtract(X,O,Z). 
 subtract(p(s(X)),Y,Z)    :- subtract(X,Y,Z).
 subtract(s(p(X)),Y,Z)    :- subtract(X,Y,Z).
+subtract(s(X),s(Y),Z)    :- subtract(X,Y,Z).
+subtract(p(X),p(Y),Z)    :- subtract(X,Y,Z).
 subtract(X,p(s(Y)),Z)    :- subtract(X,Y,Z).
 subtract(X,s(p(Y)),Z)    :- subtract(X,Y,Z).
-%subtract(s(X),p(Y),Z)    :- subtract(X,Y,Z).
+%subtract(s(X),p(Y),Z)   :- subtract(X,Y,Z).
 subtract(X,s(Y),p(Z))    :- subtract(X,Y,Z).
 subtract(X,p(Y),s(Z))    :- subtract(X,Y,Z).
 
