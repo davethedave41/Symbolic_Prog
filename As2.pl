@@ -8,34 +8,20 @@ v(0) --> [].
 v(C) --> [1], {CM1 is C-1}, v(CM1).
 v(C) --> [0], v(C).
 
-s2 --> h1(0), h2(3), h3(6).
-h1(ID1) --> col(ID1), {ID1_2 = 1}, nat(ID1_2), {ID1_3 = 2}, pet(ID1_3).
-h2(ID2) --> col(ID2), {ID2_2 = 4}, nat(ID2_2), {ID2_3 = 5}, pet(ID2_3).
-h3(ID3) --> col(ID3), {ID3_2 = 7}, nat(ID3_2), {ID3_3 = 8}, pet(ID3_3).
-col(ID) --> {ID = 0};
-            {ID = 3};
-            {ID = 6}, [red].
-col(ID) --> {ID = 0};
-            {ID = 3};
-            {ID = 6}, [blue].
-col(ID) --> {ID = 0};
-            {ID = 3};
-            {ID = 6}, [green].
-nat(ID) --> {ID = 1};
-            {ID = 4};
-            {ID = 7}, [english].
-nat(ID) --> {ID = 1};
-            {ID = 4};
-            {ID = 7}, [spanish].
-nat(ID) --> {ID = 1};
-            {ID = 4};
-            {ID = 7}, [japanese].
-pet(ID) --> {ID = 2};
-            {ID = 5};
-            {ID = 8}, [zebra].
-pet(ID) --> {ID = 2};
-            {ID = 5};
-            {ID = 8}, [jaguar].
-pet(ID) --> {ID = 2};
-            {ID = 5};
-            {ID = 8}, [snail].            
+s2 --> h(X,Y,Z), h(X2,Y2,Z2), {X2 \== X}, {Y2 \== Y}, {Z2 \== Z},
+                     h(X3,Y3,Z3), {X3 \== X}, {Y3 \== Y}, {Z3 \== Z},
+                       {X3 \== X2}, {Y3 \== Y2}, {Z3 \== Z2}.
+h(X,Y,Z) --> col(X), nat(Y), pet(Z).
+col(X) --> [Word], {lex(Word, col)}, {X = Word}.
+nat(Y) --> [Word], {lex(Word, nat)}, {Y = Word}.
+pet(Z) --> [Word], {lex(Word, pet)}, {Z = Word}.
+
+lex(english,  nat).
+lex(spanish,  nat).
+lex(japanese, nat).
+lex(red,      col).
+lex(blue,     col). 
+lex(green,    col).
+lex(zebra,    pet).
+lex(snail,    pet).
+lex(jaguar,   pet).      
