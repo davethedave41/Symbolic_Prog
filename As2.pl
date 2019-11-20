@@ -29,11 +29,12 @@ lex(jaguar,   pet).
 
 
 %% Q3
-sum(X) --> {mkList(X,[H|T])}, i(X,H).
-i(X,0)   --> [].
-i(X,Val) --> [Val], {XM is X - Val}, {XM == 0}, i(X,XM).
-i(X,Val) --> [Val], {XM is X - Val}, {XM > 0}, i(X,Val). 
-i(X,Val) --> i(X,ValM), {ValM is Val-1}. 
+%% makes list of all numbers below current number and checks if the current value
+%% being used is part of the list and then Z becomes the new number to subtract down to
+%% and is checked to be equal to zero just incase it doesn't need to be subtracted anymore
+%% or if it is over subtracted then the language fails.       
+sum(X)--> [X].
+sum(X)--> [Y], {mkList(X,L), member(Y,L), Z is X-Y, Z\=0}, sum(Z).
 
 %% mkList predicate
 mkList(0,[]).
