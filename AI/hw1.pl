@@ -66,9 +66,11 @@ reformat([A|L],[[A]|R]) :- reformat(L,R).
 mkList((X,T),[X|R]) :- !, mkList(T,R).
 mkList(X,[X]).
 initKB(File) :- retractall(kb(_)), makeKB(File).
+goal([]).
+
 member(Node,L,X,C,Len) :-
     nth0(C,L,E,_),
-            nth0(0,E,Node,X);
+            nth0(0,E,Node,X), !;
                 NewC is C + 1,
                         NewC =< Len,
                             member(Node,L,X,NewC,Len).
@@ -79,9 +81,14 @@ astar(Node,Path) :-
     kb(KB),
         astar(Node,Path,KB).
 astar(Node,Path,KB) :- search([Node],Path,KB).
-search([], [], KB).
-search([Node|Rest],Path,KB) :-
+isEmpty(Node, [], []).
+search([Node|Rest],[Node,[]|Path],KB) :-
     arc(Node,Children,KB),
         append(Children,Rest,New),
-            search(New,[Node|Path],KB).
+            New == [],
+                isEmpty(New,Path,[]).
+search([Node|Rest],[Node|Path],KB) :-
+    arc(Node,Children,KB),
+        append(Children,Rest,New),
+                    search(New,Path,KB).
 % can't figure out why goal predicate doesn't work
