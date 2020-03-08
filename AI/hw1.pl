@@ -66,8 +66,6 @@ reformat([A|L],[[A]|R]) :- reformat(L,R).
 mkList((X,T),[X|R]) :- !, mkList(T,R).
 mkList(X,[X]).
 initKB(File) :- retractall(kb(_)), makeKB(File).
-goal([]).
-
 member(Node,L,X,C,Len) :-
     nth0(C,L,E,_),
             nth0(0,E,Node,X), !;
@@ -77,18 +75,20 @@ member(Node,L,X,C,Len) :-
 arc(Node,X,KB) :-
     length(KB,Len),
         member(Node,KB,X,0,Len).
-astar(Node,Path) :-
+astar(Node,Path,Cost) :-
     kb(KB),
-        astar(Node,Path,KB).
-astar(Node,Path,KB) :- search([Node],Path,KB).
-isEmpty(Node, [], []).
-search([Node|Rest],[Node,[]|Path],KB) :-
+        astar(Node,Path,Cost,KB).
+astar(Node,Path,Cost,KB) :- search([Node],Path,Cost,0,KB).
+isEmpty(Node, [], Cost,Cost,[]).
+search([Node|Rest],[Node,[]|Path],Cost,Counter,KB) :-
     arc(Node,Children,KB),
         append(Children,Rest,New),
             New == [],
-                isEmpty(New,Path,[]).
-search([Node|Rest],[Node|Path],KB) :-
+                NCounter is Counter+1,
+                    isEmpty(New,Path,Cost,NCounter,[]).
+search([Node|Rest],[Node|Path],Cost,Counter,KB) :-
     arc(Node,Children,KB),
         append(Children,Rest,New),
-                    search(New,Path,KB).
+            NCounter is Counter+1,
+                    search(New,Path,Cost,NCounter,KB).
 % can't figure out why goal predicate doesn't work
