@@ -68,7 +68,7 @@ mkList(X,[X]).
 initKB(File) :- retractall(kb(_)), makeKB(File).
 member(Node,L,X,C,Len) :-
     nth0(C,L,E,_),
-            nth0(0,E,Node,X), !;
+            nth0(0,E,Node,X);
                 NewC is C + 1,
                         NewC =< Len,
                             member(Node,L,X,NewC,Len).
@@ -78,17 +78,30 @@ arc(Node,X,KB) :-
 astar(Node,Path,Cost) :-
     kb(KB),
         astar(Node,Path,Cost,KB).
-astar(Node,Path,Cost,KB) :- search([Node],Path,Cost,0,KB).
+astar(Node,Path,Cost,KB) :- search([Node],Path,Cost,1,KB).
 isEmpty(Node, [], Cost,Cost,[]).
+%search([[]|Rest],Path,Cost,Counter,KB) :-
+%    search([Rest],Path,Cost,Counter,KB).
 search([Node|Rest],[Node,[]|Path],Cost,Counter,KB) :-
-    arc(Node,Children,KB),
-        append(Children,Rest,New),
-            New == [],
-                NCounter is Counter+1,
-                    isEmpty(New,Path,Cost,NCounter,[]).
+    nth0(0,[Node],P,_),
+        nth0(0,P,E,R),
+            findall(X,arc(E,X,KB),Children),
+                append(Children,R,New),
+                    New == [[]],
+                        NCounter is Counter+1,
+                            isEmpty(New,Path,Cost,NCounter,[]).
 search([Node|Rest],[Node|Path],Cost,Counter,KB) :-
-    arc(Node,Children,KB),
-        append(Children,Rest,New),
-            NCounter is Counter+1,
-                    search(New,Path,Cost,NCounter,KB).
-% can't figure out why goal predicate doesn't work
+    nth0(0,[Node],P,_),
+        nth0(0,P,E,R),
+            findall(X,arc(E,X,KB),Children),
+                append(Children,R,New),
+                    delete(New, [], NewX),
+                        NCounter is Counter+1,
+                            checkL(NewX,Path,Cost,NCounter,KB).
+                            %search(NewX,Path,Cost,NCounter,KB).
+checkL([Node|Rest],Path,Cost,Counter,KB) :-
+    nth0(0,[Node],Res,_),
+        is_list(Res),
+            search([Node|Rest],Path,Cost,Counter,KB).
+checkL([Node|Rest],Path,Cost,Counter,KB) :-
+    search([[Node]|Rest],Path,Cost,Counter,KB).
